@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Gidah Thomas | Software Developer &amp; UI/UX Designer</title>
+    <meta name="description"
+        content="Portfolio of Gidamasauda Thomas Gwasma, a Software Engineering student and software developer from Tanzania specializing in software development, web applications, databases, UI/UX design, and digital solutions.">
+    <meta name="keywords"
+        content="Gidah Thomas, Gidamasauda Thomas Gwasma, software developer, software engineering, University of Dodoma, UI/UX designer, Java, Spring Boot, Yii2, React, MySQL, Tanzania, Dar es Salaam, portfolio, CV">
+    <meta name="author" content="Gidamasauda Thomas Gwasma">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://gidahthomas.github.io/portfolio/">
+    <meta name="theme-color" content="#0a0f1c" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f6f8fb" media="(prefers-color-scheme: light)">
+
+    <!-- Social sharing -->
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="Gidah Thomas">
+    <meta property="og:title" content="Gidah Thomas | Software Developer &amp; UI/UX Designer">
+    <meta property="og:description"
+        content="Professional portfolio and CV of Gidah Thomas — Software Developer, Software Engineering Student (University of Dodoma) and UI/UX Designer from Tanzania.">
+    <meta property="og:url" content="https://gidahthomas.github.io/portfolio/">
+    <meta property="og:image" content="https://gidahthomas.github.io/portfolio/images/gidah-headshot.jpg">
+    <meta property="og:image:width" content="320">
+    <meta property="og:image:height" content="320">
+    <meta property="og:image:alt" content="Gidah Thomas">
+    <meta property="og:locale" content="en_US">
+    <meta property="profile:first_name" content="Gidamasauda">
+    <meta property="profile:last_name" content="Gwasma">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Gidah Thomas | Software Developer &amp; UI/UX Designer">
+    <meta name="twitter:description"
+        content="Professional portfolio and CV of Gidah Thomas — Software Developer, Software Engineering Student and UI/UX Designer from Tanzania.">
+    <meta name="twitter:image" content="https://gidahthomas.github.io/portfolio/images/gidah-headshot.jpg">
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="images/gidah-headshot.jpg">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Gidamasauda Thomas Gwasma",
+      "alternateName": "Gidah Thomas",
+      "jobTitle": "Software Developer",
+      "email": "mailto:gidamasaudathomas@gmail.com",
+      "url": "https://gidahthomas.github.io/portfolio/",
+      "image": "https://gidahthomas.github.io/portfolio/images/gidah-headshot.jpg",
+      "address": { "@type": "PostalAddress", "addressLocality": "Dar es Salaam", "addressCountry": "TZ" },
+      "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Dodoma" },
+      "sameAs": ["https://github.com/GidahThomas"],
+      "knowsAbout": ["Software Engineering", "Java", "Spring Boot", "Yii2", "React", "MySQL", "UI/UX Design", "System Analysis"]
+    }
+    </script>
+
+    <!-- Before first paint: apply theme, and decide whether the opening CV popup shows (no flash of the page) -->
+    <script>
+        (function () {
+            var d = document.documentElement, t = null, seen = null;
+            try { t = localStorage.getItem('theme'); } catch (e) { }
+            if (t !== 'light' && t !== 'dark') {
+                t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            }
+            d.setAttribute('data-theme', t);
+            d.setAttribute('data-bs-theme', t);
+            try { seen = sessionStorage.getItem('cvIntroSeen'); } catch (e) { }
+            var deepLink = location.hash && location.hash.length > 1;
+            if (!seen && !deepLink) d.classList.add('cv-intro');
+        })();
+    </script>
+
+    <!-- Bootstrap sits in a cascade layer, so the site's own (unlayered) styles always take precedence -->
+    <style>@import url("assets/vendor/bootstrap/css/bootstrap.min.css") layer(bootstrap);</style>
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/cv-document.css">
+</head>
+
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- ============ HEADER ============ -->
+    <header class="site-header" id="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="#home" aria-label="Gidah Thomas — home">
+                <span class="brand-mark" aria-hidden="true">GT</span>
+                <span class="brand-text">
+                    <strong>Gidah Thomas</strong>
+                    <small>Software Developer</small>
+                </span>
+            </a>
+
+            <nav class="primary-nav" aria-label="Primary">
+                <ul id="nav-links"></ul>
+            </nav>
+
+            <div class="header-actions">
+                <div class="header-social" id="header-social"></div>
+                <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch colour theme"></button>
+                <button class="btn btn-primary btn-sm header-cv" type="button" data-open-cv aria-label="View CV">
+                    <span data-icon="file"></span><span class="header-cv-label">View CV</span>
+                </button>
+                <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open menu"
+                    aria-expanded="false" aria-controls="mobile-menu"></button>
+            </div>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu" hidden>
+            <div class="container">
+                <ul class="mobile-links" id="mobile-links"></ul>
+                <div class="mobile-footer">
+                    <div class="mobile-cv">
+                        <button class="btn btn-primary btn-lg" type="button" data-open-cv><span
+                                data-icon="file"></span>View CV</button>
+                        <a class="btn btn-outline btn-lg" data-cv-download href="#"><span
+                                data-icon="download"></span>Download</a>
+                    </div>
+                    <div class="social-row" id="mobile-social"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Scroll area between the header and the pager: with JavaScript each page fits the window
+         and only this area scrolls when a page is taller than the space available -->
+    <div class="page-scroll" id="page-scroll">
+    <main id="main">
+        <!-- ============ HERO ============ -->
+        <section class="hero" id="home" aria-labelledby="hero-name">
+            <div class="hero-bg" aria-hidden="true">
+                <div class="grid-overlay"></div>
+                <div class="glow glow-a"></div>
+            </div>
+            <div class="container hero-grid">
+                <div class="hero-copy">
+                    <p class="status-pill reveal"><span class="pulse" aria-hidden="true"></span><span
+                            data-bind="profile.status"></span></p>
+                    <div class="hero-id reveal">
+                        <img class="hero-avatar" id="hero-avatar" alt="Photo of Gidah Thomas" width="240" height="240"
+                            fetchpriority="high">
+                        <h1 id="hero-name" class="hero-name" data-bind="profile.name"></h1>
+                    </div>
+                    <ul class="hero-roles reveal" id="hero-roles" aria-label="Roles"></ul>
+                    <p class="hero-headline reveal"></p>
+                    <p class="hero-summary reveal" data-bind="profile.summary"></p>
+                    <div class="hero-actions reveal">
+                        <a class="btn btn-primary btn-lg" href="#projects">View My Work <span
+                                data-icon="arrowRight"></span></a>
+                        <button class="btn btn-outline btn-lg" type="button" data-open-cv><span
+                                data-icon="file"></span>View CV</button>
+                        <a class="btn btn-ghost btn-lg" href="#contact"><span data-icon="mail"></span>Contact Me</a>
+                    </div>
+                    <ul class="hero-meta reveal" id="hero-meta"></ul>
+                </div>
+
+                <aside class="hero-card reveal" id="hero-card" aria-label="Profile summary"></aside>
+            </div>
+        </section>
+
+        <!-- ============ ABOUT ============ -->
+        <section class="section" id="about" aria-labelledby="about-title">
+            <div class="container">
+                <header class="section-head reveal">
+                    <p class="eyebrow">About</p>
+                    <h2 id="about-title">Software developer focused on practical, dependable systems</h2>
+                </header>
+                <div class="about-grid">
+                    <figure class="about-photo reveal">
+                        <img id="about-photo" alt="Portrait of Gidah Thomas" width="720" height="1280" loading="lazy"
+                            decoding="async">
+                        <figcaption>
+                            <strong data-bind="profile.fullName"></strong>
+                            <span><span data-icon="pin"></span> <span data-bind="profile.location"></span></span>
+                        </figcaption>
+                    </figure>
+                    <div class="about-body">
+                        <div class="about-text reveal" id="about-text"></div>
+                        <div class="about-focus reveal">
+                            <h3>What drives my work</h3>
+                            <ul class="chip-list" id="about-focus"></ul>
+                        </div>
+                    </div>
+                </div>
+                <ul class="stats reveal" id="about-stats"></ul>
+            </div>
+        </section>
+
+        <!-- ============ PROJECTS ============ -->
+        <section class="section" id="projects" aria-labelledby="projects-title">
+            <div class="container">
+                <header class="section-head reveal">
+                    <p class="eyebrow">Projects</p>
+                    <h2 id="projects-title">Selected projects</h2>
+                    <p class="section-lead">Systems built for real needs — institutional service management, academic records, project management, property rentals and price prediction.</p>
+                </header>
+                <div class="projects-grid" id="projects-grid"></div>
+            </div>
+        </section>
+
+        <!-- ============ EXPERIENCE ============ -->
+        <section class="section" id="experience" aria-labelledby="experience-title">
+            <div class="container">
+                <header class="section-head reveal">
+                    <p class="eyebrow">Experience</p>
+                    <h2 id="experience-title">Professional experience</h2>
+                    <p class="section-lead">Hands-on software development in a professional environment, under
+                        supervision.</p>
+                </header>
+                <ol class="timeline" id="experience-list"></ol>
+            </div>
+        </section>
+
+        <!-- ============ SKILLS ============ -->
+        <section class="section" id="skills" aria-labelledby="skills-title">
+            <div class="container">
+                <header class="section-head section-head-row reveal">
+                    <div>
+                        <p class="eyebrow">Skills</p>
+                        <h2 id="skills-title">Technical &amp; professional skills</h2>
+                        <p class="section-lead">Languages, frameworks, engineering practices and tools I use to take a
+                            system from requirements to delivery.</p>
+                    </div>
+                    <label class="skill-filter">
+                        <span data-icon="code"></span>
+                        <input type="search" id="skill-filter" placeholder="Filter skills — e.g. Java, SQL"
+                            aria-label="Filter skills" autocomplete="off">
+                    </label>
+                </header>
+                <div class="skills-grid" id="skills-grid"></div>
+                <p class="filter-empty" id="skill-empty" hidden>No matching skills.</p>
+            </div>
+        </section>
+
+        <!-- ============ EDUCATION ============ -->
+        <section class="section" id="education" aria-labelledby="education-title">
+            <div class="container">
+                <header class="section-head reveal">
+                    <p class="eyebrow">Education</p>
+                    <h2 id="education-title">Academic background</h2>
+                </header>
+                <div id="education-list"></div>
+            </div>
+        </section>
+
+        <!-- ============ LEADERSHIP ============ -->
+        <section class="section" id="leadership" aria-labelledby="leadership-title">
+            <div class="container">
+                <header class="section-head reveal">
+                    <p class="eyebrow">Leadership</p>
+                    <h2 id="leadership-title">Student leadership</h2>
+                    <p class="section-lead">Representing students and supporting academic and innovation initiatives.
+                    </p>
+                </header>
+                <div id="leadership-list"></div>
+            </div>
+        </section>
+
+        <!-- ============ PROFESSIONAL INTERESTS ============ -->
+        <section class="section" id="interests" aria-labelledby="interests-title">
+            <div class="container">
+                <header class="section-head reveal">
+                    <p class="eyebrow">Career direction</p>
+                    <h2 id="interests-title">Professional interests</h2>
+                    <p class="section-lead">Areas where I want to grow and contribute.</p>
+                </header>
+                <ul class="interests-grid" id="interests-grid"></ul>
+            </div>
+        </section>
+
+        <!-- ============ SERVICES ============ -->
+        <section class="section" id="services" aria-labelledby="services-title">
+            <div class="container">
+                <header class="section-head reveal">
+                    <p class="eyebrow">Services</p>
+                    <h2 id="services-title">What I can build</h2>
+                    <p class="section-lead">From analysis and database design to working software and interfaces.</p>
+                </header>
+                <div class="services-grid" id="services-grid"></div>
+            </div>
+        </section>
+
+        <!-- ============ CV ============ -->
+        <section class="section" id="cv" aria-labelledby="cv-title">
+            <div class="container">
+                <div class="cv-banner reveal">
+                    <div class="cv-copy">
+                        <p class="eyebrow">Curriculum Vitae</p>
+                        <h2 id="cv-title" data-bind="cv.title"></h2>
+                        <p data-bind="cv.text"></p>
+                        <ul class="cv-contents" id="cv-contents"></ul>
+                        <div class="cv-actions">
+                            <button class="btn btn-primary btn-lg" type="button" data-open-cv><span
+                                    data-icon="eye"></span>View CV</button>
+                            <a class="btn btn-outline btn-lg" data-cv-download href="#"><span data-icon="download"></span>
+                                Download CV</a>
+                        </div>
+                        <p class="cv-alt">Prefer a full page? <a id="cv-page-link" href="cv/index.html">Open the printable CV</a></p>
+                    </div>
+                    <div class="cv-preview" data-open-cv>
+                        <div class="cv-preview-paper cvdoc-wrap" id="cv-preview" aria-hidden="true" inert></div>
+                        <button class="cv-preview-cta" type="button" data-open-cv aria-label="Open the CV preview"><span
+                                data-icon="eye"></span>Open CV</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ CONTACT ============ -->
+        <section class="section" id="contact" aria-labelledby="contact-title">
+            <div class="container">
+                <header class="section-head reveal">
+                    <p class="eyebrow">Contact</p>
+                    <h2 id="contact-title">Let's work together</h2>
+                    <p class="section-lead">Open to internships, software development roles, collaborations and client
+                        projects. Send a message and I'll get back to you.</p>
+                </header>
+                <div class="contact-grid">
+                    <aside class="contact-info reveal" id="contact-info"></aside>
+
+                    <form class="contact-form reveal" id="contact-form" novalidate>
+                        <div class="field-row">
+                            <div class="field">
+                                <label for="cf-name">Name</label>
+                                <input id="cf-name" name="name" type="text" autocomplete="name" required
+                                    placeholder="Your full name" aria-describedby="cf-name-error">
+                                <p class="field-error" id="cf-name-error" aria-live="polite"></p>
+                            </div>
+                            <div class="field">
+                                <label for="cf-email">Email</label>
+                                <input id="cf-email" name="email" type="email" autocomplete="email" required
+                                    placeholder="you@example.com" aria-describedby="cf-email-error">
+                                <p class="field-error" id="cf-email-error" aria-live="polite"></p>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="cf-subject">Subject</label>
+                            <input id="cf-subject" name="subject" type="text" required
+                                placeholder="e.g. Internship opportunity"
+                                aria-describedby="cf-subject-error">
+                            <p class="field-error" id="cf-subject-error" aria-live="polite"></p>
+                        </div>
+                        <div class="field">
+                            <label for="cf-message">Message</label>
+                            <textarea id="cf-message" name="message" rows="6" required
+                                placeholder="Tell me a little about the role or project…"
+                                aria-describedby="cf-message-error"></textarea>
+                            <p class="field-error" id="cf-message-error" aria-live="polite"></p>
+                        </div>
+                        <!-- Spam honeypot: humans never see or fill this -->
+                        <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                        <button class="btn btn-primary btn-lg btn-block" type="submit" id="cf-submit">
+                            <span data-icon="send"></span><span class="btn-label">Send Message</span>
+                        </button>
+                        <p class="form-status" id="cf-status" role="status" aria-live="polite" hidden></p>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="site-footer" id="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a class="brand" href="#home">
+                    <span class="brand-mark" aria-hidden="true">GT</span>
+                    <span class="brand-text"><strong>Gidah Thomas</strong></span>
+                </a>
+                <p class="footer-roles" id="footer-roles"></p>
+                <p class="footer-tagline">"<span data-bind="profile.tagline"></span>"</p>
+            </div>
+            <nav class="footer-nav" aria-label="Footer">
+                <h3>Navigate</h3>
+                <ul id="footer-links"></ul>
+            </nav>
+            <div class="footer-connect">
+                <h3>Connect</h3>
+                <div class="social-row" id="footer-social"></div>
+                <a class="footer-email" data-bind-href="social.email" data-bind="profile.email"></a>
+                <div class="footer-cv">
+                    <button class="btn btn-outline btn-sm" type="button" data-open-cv><span data-icon="file"></span>
+                        View CV</button>
+                    <a class="btn btn-ghost btn-sm" data-cv-download href="#"><span data-icon="download"></span>
+                        Download</a>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2026 Gidamasauda Thomas Gwasma. All rights reserved.</p>
+            <a class="to-top" href="#home"><span data-icon="arrowUp"></span> Back to top</a>
+        </div>
+    </footer>
+    </div>
+
+    <!-- Page switcher, pinned to the bottom of the window (filled in by js/app.js; hidden without
+         JavaScript, when every section shows stacked) -->
+    <nav class="pager" id="pager" aria-label="Pages"></nav>
+
+    <!-- ============ CV VIEWER (opening popup) ============ -->
+    <div class="cv-viewer" id="cv-viewer">
+        <div class="cvv-backdrop" data-cv-action="continue"></div>
+        <div class="cvv-window" role="dialog" aria-modal="true" aria-labelledby="cvv-title" tabindex="-1">
+            <div class="cvv-bar">
+                <span class="cvv-file">
+                    <span class="cvv-file-icon" data-icon="file"></span>
+                    <span class="cvv-file-text">
+                        <strong id="cvv-title">Curriculum Vitae</strong>
+                        <small id="cvv-subtitle"></small>
+                    </span>
+                </span>
+                <div class="cvv-bar-actions">
+                    <a class="icon-btn cvv-icon" data-cv-download href="#" aria-label="Download CV (PDF)"
+                        title="Download CV (PDF)"><span data-icon="download"></span></a>
+                    <a class="icon-btn cvv-icon cvv-print" id="cvv-print" href="cv/index.html" target="_blank" rel="noopener"
+                        aria-label="Open printable CV in a new tab" title="Open printable CV"><span
+                            data-icon="printer"></span></a>
+                    <button class="icon-btn cvv-icon" type="button" data-cv-action="continue"
+                        aria-label="Close CV and continue to website" title="Close"><span data-icon="x"></span></button>
+                </div>
+            </div>
+            <div class="cvv-scroll" id="cvv-scroll" tabindex="0" aria-label="CV document">
+                <div class="cvv-paper cvdoc-wrap" id="cvv-doc"></div>
+            </div>
+            <div class="cvv-actions">
+                <button class="btn btn-primary btn-lg" type="button" data-cv-action="portfolio"><span
+                        data-icon="layout"></span>View Full Portfolio</button>
+                <a class="btn btn-outline btn-lg" data-cv-download href="#"><span data-icon="download"></span>Download
+                    CV</a>
+                <button class="btn btn-ghost btn-lg" type="button" data-cv-action="continue">Continue to Website<span
+                        data-icon="arrowRight"></span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ PROJECT MODAL ============ -->
+    <div class="modal" id="project-modal" hidden>
+        <div class="modal-backdrop" data-close-modal></div>
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
+            <button class="icon-btn modal-close" type="button" data-close-modal aria-label="Close project details"></button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <noscript>
+        <style>
+            .cv-viewer { display: none !important; }
+        </style>
+        <div class="noscript">This site needs JavaScript to display its content. You can still <a
+                href="assets/cv/Gidah-Thomas-CV.pdf">download the CV (PDF)</a> or email <a
+                href="mailto:gidamasaudathomas@gmail.com">gidamasaudathomas@gmail.com</a>.</div>
+    </noscript>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/cv-document.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
