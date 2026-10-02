@@ -647,6 +647,27 @@
         '&body=' + encodeURIComponent(body);
     }
 
+    // Sent: the fields give way to a confirmation card that thanks the visitor by name
+    var success = document.getElementById('cf-success');
+    var successTitle = document.getElementById('cf-success-title');
+    function showSuccess(name, email) {
+      var first = name.split(/\s+/)[0];
+      document.getElementById('cf-success-name').textContent = first ? ', ' + first : '';
+      document.getElementById('cf-success-email').textContent = email;
+      document.getElementById('cf-success-reply').hidden = !email;
+      status.hidden = true;
+      form.classList.add('is-sent');
+      success.hidden = false;
+      successTitle.focus({ preventScroll: true });
+      var top = form.getBoundingClientRect().top;
+      if (top < 80 || top > window.innerHeight * 0.6) form.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    }
+    document.getElementById('cf-again').addEventListener('click', function () {
+      success.hidden = true;
+      form.classList.remove('is-sent');
+      form.elements.name.focus();
+    });
+
     function showFallback(reason) {
       show('err', esc(reason) + ' <a class="btn btn-outline btn-sm form-mailto" href="' + esc(mailtoHref()) + '">' +
         icon('mail') + 'Send with your email app</a> <span class="form-alt">or email <a href="' + esc(D.social.email) + '">' +
@@ -693,9 +714,9 @@
             err.activation = /activat/i.test(err.message);
             throw err;
           }
+          showSuccess(form.elements.name.value.trim(), form.elements.email.value.trim());
           form.reset();
           names.forEach(function (n) { form.elements[n].removeAttribute('aria-invalid'); });
-          show('ok', 'Thank you — your message has been sent. I will reply as soon as possible.');
         })
         .catch(function (err) {
           // Keep what the visitor typed, and offer to send it from their own email app

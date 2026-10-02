@@ -942,6 +942,50 @@ a.link-row:hover .go { transform: translateX(3px); color: var(--accent); }
 .form-status .form-mailto { display: inline-flex; margin: 10px 0 4px; text-decoration: none; color: var(--text); }
 .form-status .form-alt { display: block; color: var(--text-2); font-weight: 400; }
 
+/* Sent: the confirmation card takes the place of the fields */
+.contact-form.is-sent > :not(.form-success) { display: none; }
+.contact-form.is-sent {
+  background:
+    radial-gradient(420px 260px at 50% 0%, var(--ambient-a), transparent 70%),
+    radial-gradient(360px 240px at 100% 100%, var(--ambient-c), transparent 70%),
+    var(--surface);
+}
+.form-success {
+  display: grid; justify-items: center; text-align: center; gap: 0;
+  padding: clamp(20px, 4vw, 40px) clamp(4px, 2vw, 24px);
+  animation: successIn .5s var(--ease) both;
+}
+.success-badge {
+  position: relative; display: grid; place-items: center; width: 76px; height: 76px; margin-bottom: 22px;
+  border-radius: 50%; background: var(--grad); color: #fff;
+  box-shadow: 0 18px 40px -14px var(--glow), inset 0 1px 0 rgba(255, 255, 255, .25);
+  animation: badgePop .6s cubic-bezier(.2, 1.4, .4, 1) both .1s;
+}
+.success-badge::before {
+  content: ''; position: absolute; inset: -10px; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  animation: badgeRing 1.2s ease-out both .35s;
+}
+.success-badge .icon { width: 36px; height: 36px; stroke-width: 2.6; }
+.form-success .eyebrow { margin-bottom: 10px; }
+.form-success h3 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); letter-spacing: -.025em; outline: none; }
+.success-lead { margin-top: 12px; max-width: 46ch; color: var(--text-2); font-size: var(--fs-md); line-height: 1.6; }
+.success-reply {
+  display: inline-flex; align-items: center; gap: 10px; max-width: 100%; margin-top: 20px;
+  padding: 10px 16px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border);
+  font-size: var(--fs-sm); color: var(--muted); text-align: left;
+}
+.success-reply .icon { width: 17px; height: 17px; color: var(--accent); }
+.success-reply strong { color: var(--text); font-weight: 600; overflow-wrap: anywhere; }
+.success-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 28px; }
+@media (max-width: 479px) {
+  .success-actions { display: grid; width: 100%; }
+  .success-reply { border-radius: 14px; }
+}
+@keyframes successIn { from { opacity: 0; transform: translateY(10px); } }
+@keyframes badgePop { from { opacity: 0; transform: scale(.4); } }
+@keyframes badgeRing { from { opacity: 1; transform: scale(.8); } to { opacity: 0; transform: scale(1.35); } }
+
 /* ---------- Footer ---------- */
 .site-footer { border-top: 1px solid var(--border); background: var(--bg); padding-top: 56px; }
 .footer-grid { display: grid; gap: 36px; padding-bottom: 40px; }

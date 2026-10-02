@@ -353,6 +353,19 @@
                             <span data-icon="send"></span><span class="btn-label">Send Message</span>
                         </button>
                         <p class="form-status" id="cf-status" role="status" aria-live="polite" hidden></p>
+
+                        <!-- Shown in place of the fields once a message has been sent (filled in by js/app.js) -->
+                        <div class="form-success" id="cf-success" hidden>
+                            <span class="success-badge" aria-hidden="true"><span data-icon="check"></span></span>
+                            <p class="eyebrow">Message received</p>
+                            <h3 id="cf-success-title" tabindex="-1">Thank you<span id="cf-success-name"></span></h3>
+                            <p class="success-lead">Your message has been delivered to my inbox. I read every message personally and will reply as soon as possible.</p>
+                            <p class="success-reply" id="cf-success-reply" hidden><span data-icon="mail"></span><span>My reply will go to <strong id="cf-success-email"></strong></span></p>
+                            <div class="success-actions">
+                                <button class="btn btn-primary" type="button" id="cf-again"><span data-icon="send"></span>Send another message</button>
+                                <a class="btn btn-ghost" href="#projects">Browse my projects <span data-icon="arrowRight"></span></a>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
