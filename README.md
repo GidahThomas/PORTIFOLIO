@@ -14,7 +14,7 @@ Or serve the folder with any static server:
 npx http-server -p 5500 -c-1
 ```
 
-and open http://localhost:5500. The contact form sends through FormSubmit, which only works from a hosted site (http/https), not from a file opened on disk.
+and open http://localhost:5500. The contact form sends through FormSubmit only from an activated web address (see "Contact form" below); opened from disk it falls back to the visitor's email app.
 
 ## Structure
 
@@ -82,8 +82,10 @@ Alternatively open `/cv/`, press **Print**, and choose **Save as PDF** (A4, marg
 
 ## Contact form
 
-Messages are sent through [FormSubmit](https://formsubmit.co) to `gidamasaudathomas@gmail.com` — no backend needed. The **first submission after deploying** triggers a one-time confirmation email from FormSubmit that must be clicked to activate delivery. If sending fails, the form shows the email address as a fallback.
+Messages are sent through [FormSubmit](https://formsubmit.co) to `gidamasaudathomas@gmail.com` — no backend needed. It is active on https://gidah-thomas.vercel.app.
+
+FormSubmit activates the form **separately for each web address** it is sent from. Testing locally (VS Code Live Server on `127.0.0.1:5500`, `localhost`) therefore shows "waiting for activation" until you click the activation email FormSubmit sends for that address, and a page opened straight from disk (`file://`) cannot use FormSubmit at all — there the form opens the visitor's email app instead. If sending fails for any reason, the form keeps the message, explains why, and offers **Send with your email app** with everything pre-filled.
 
 ## Deployment
 
-Hosted on **Vercel** at https://gidah-thomas.vercel.app (project `gidah-thomas`). It is a static site with no build step. To publish changes, run `npx vercel deploy --prod` from this folder (`.vercelignore` keeps the README, font sources and `.env*` files out of the upload). The canonical / social-sharing URLs in `index.html`, `cv/index.html` and `social.portfolio` in `js/data.js` use that address — update them if the domain changes.
+Hosted on **Vercel** at https://gidah-thomas.vercel.app (project `gidah-thomas`). It is a static site with no build step. The project is connected to the GitHub repository [GidahThomas/PORTIFOLIO](https://github.com/GidahThomas/PORTIFOLIO), so **every push to `main` publishes the site automatically**. To publish without pushing, run `npx vercel deploy --prod` from this folder (`.vercelignore` keeps the README, font sources and `.env*` files out of the upload). The canonical / social-sharing URLs in `index.html`, `cv/index.html` and `social.portfolio` in `js/data.js` use that address — update them if the domain changes.
