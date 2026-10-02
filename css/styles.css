@@ -939,6 +939,8 @@ a.link-row:hover .go { transform: translateX(3px); color: var(--accent); }
 .form-status.ok { background: color-mix(in srgb, var(--ok) 13%, transparent); color: var(--ok); }
 .form-status.err { background: color-mix(in srgb, var(--err) 12%, transparent); color: var(--err); }
 .form-status a { text-decoration: underline; }
+.form-status .form-mailto { display: inline-flex; margin: 10px 0 4px; text-decoration: none; color: var(--text); }
+.form-status .form-alt { display: block; color: var(--text-2); font-weight: 400; }
 
 /* ---------- Footer ---------- */
 .site-footer { border-top: 1px solid var(--border); background: var(--bg); padding-top: 56px; }

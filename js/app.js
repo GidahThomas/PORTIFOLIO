@@ -639,6 +639,20 @@
       status.innerHTML = icon(kind === 'ok' ? 'check' : 'x') + '<span>' + text + '</span>';
     }
 
+    // The same message as a mailto: link, so it can always be sent from the visitor's own email app
+    function mailtoHref() {
+      var f = form.elements;
+      var body = f.message.value.trim() + '\n\n— ' + f.name.value.trim() + ' (' + f.email.value.trim() + ')';
+      return D.social.email + '?subject=' + encodeURIComponent('Portfolio enquiry: ' + f.subject.value.trim()) +
+        '&body=' + encodeURIComponent(body);
+    }
+
+    function showFallback(reason) {
+      show('err', esc(reason) + ' <a class="btn btn-outline btn-sm form-mailto" href="' + esc(mailtoHref()) + '">' +
+        icon('mail') + 'Send with your email app</a> <span class="form-alt">or email <a href="' + esc(D.social.email) + '">' +
+        emailHtml(D.profile.email) + '</a></span>');
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var names = Object.keys(rules);
@@ -650,6 +664,13 @@
       }
       if (form.elements._honey.value) return; // bot
 
+      // FormSubmit cannot accept messages from a page opened straight from disk: use the email app instead
+      if (location.protocol === 'file:') {
+        window.location.href = mailtoHref();
+        show('ok', 'Your email app should open with the message ready to send. (The form sends directly once the site is online.)');
+        return;
+      }
+
       var data = new FormData(form);
       data.append('_subject', 'Portfolio enquiry: ' + form.elements.subject.value.trim());
       data.append('_template', 'table');
@@ -659,19 +680,32 @@
       label.textContent = 'Sending…';
       status.hidden = true;
 
-      fetch(D.contact.formEndpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: data })
-        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      // Give up after 20 s rather than leaving the button on "Sending…"
+      var ctrl = 'AbortController' in window ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 20000) : null;
+
+      fetch(D.contact.formEndpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: data, signal: ctrl ? ctrl.signal : undefined })
+        .then(function (r) { return r.json().catch(function () { return { success: r.ok, message: 'HTTP ' + r.status }; }); })
         .then(function (res) {
-          if (res && (res.success === false || res.success === 'false')) throw new Error(res.message || 'Rejected');
+          // Only an explicit success counts (FormSubmit's "Server Error" reply has no success field)
+          if (!res || (res.success !== true && res.success !== 'true')) {
+            var err = new Error(res && res.message || 'Rejected');
+            err.activation = /activat/i.test(err.message);
+            throw err;
+          }
           form.reset();
           names.forEach(function (n) { form.elements[n].removeAttribute('aria-invalid'); });
           show('ok', 'Thank you — your message has been sent. I will reply as soon as possible.');
         })
-        .catch(function () {
-          show('err', 'Your message could not be sent right now. Please email me directly at <a href="' +
-            esc(D.social.email) + '">' + esc(D.profile.email) + '</a>.');
+        .catch(function (err) {
+          // Keep what the visitor typed, and offer to send it from their own email app
+          showFallback(err && err.activation
+            ? 'The contact form is waiting for activation on this address, so your message was not sent.'
+            : err && err.name === 'AbortError'
+              ? 'The message service did not respond in time, so your message was not sent.'
+              : 'Your message could not be sent right now.');
         })
-        .then(function () { submit.disabled = false; label.textContent = 'Send Message'; });
+        .then(function () { clearTimeout(timer); submit.disabled = false; label.textContent = 'Send Message'; });
     });
   }
 
