@@ -22,7 +22,7 @@ and open http://localhost:5500. The contact form sends through FormSubmit, which
 | --- | --- |
 | `index.html` | Single-page portfolio (Home, About, Projects, Experience, Skills, Education, Leadership, Interests, Services, CV, Contact) plus the opening CV popup |
 | `js/data.js` | **All content** — profile, skills, projects, experience, education, leadership, services, links |
-| `js/app.js` | Renders the page from `data.js`; page switching, theme toggle, mobile menu, active nav, project modal, skill filter, contact form |
+| `js/app.js` | Renders the page from `data.js`; scroll navigation and active-section highlighting, theme toggle, mobile menu, active nav, project modal, skill filter, contact form |
 | `js/cv-document.js` | **Shared CV renderer** — used by the opening popup, the CV section preview and `cv/`, so every copy of the CV is identical |
 | `css/cv-document.css` | CV document styles (responds to its container: two columns when wide, one column on phones) |
 | `js/icons.js` | Inline SVG icon set |
@@ -42,18 +42,15 @@ Bootstrap 5.3.8 is loaded on `index.html` and `cv/index.html`, so its utility cl
 - **Shared class names.** The site already uses `.btn`, `.btn-primary`, `.btn-lg`, `.btn-sm`, `.card`, `.container`, `.lead`, `.modal`, `.modal-backdrop` and `.modal-content` for its own components. The "Bootstrap compatibility" block near the top of `css/styles.css` resets the few Bootstrap properties that would otherwise leak into them. The project modal is the site's own, not a Bootstrap modal — don't add `data-bs-toggle="modal"` to it.
 - **Theme.** Bootstrap's colour and font variables (`--bs-body-color`, `--bs-body-bg`, `--bs-border-color`, …) point at the site's tokens, and the theme toggle sets `data-bs-theme` alongside `data-theme`, so Bootstrap components follow light/dark mode.
 
-## Pages
+## Layout
 
-The portfolio shows **one section at a time** instead of one long scroll. Each `<section>` in `<main>` is a page, and the next one slides in from the side: from the right going forward, from the left going back. You can move between pages with:
+The portfolio is **one scrolling page**. Menu links (header, mobile menu, footer) and any link to `#<section-id>` (e.g. the hero's **View My Work** → `#projects`) scroll smoothly to that section, stopping just below the sticky header, and move keyboard focus to its heading. As you scroll, the menu item for the section in view is highlighted and a thin gradient bar along the bottom of the header shows how far down the page you are. Each section still has its own URL (`/#skills`, `/#contact`, …) for bookmarks and shared links.
 
-- the header, mobile and footer menus, and any link to `#<section-id>` (e.g. the hero's **View My Work** → `#projects`);
-- the pager under each page (**Previous / Next** plus page dots);
-- the **←/→** arrow keys (not while typing in a field or while a popup or the menu is open);
-- a horizontal **swipe** on touch screens.
+The logic is `setupScrollNav()` and `setupHeaderShadow()` in `js/app.js`.
 
-**Each page fits the browser window.** The header stays at the top and the pager is pinned to the bottom. The current page fills the space between them and is centred when it is shorter. When a page has more content than fits (e.g. Projects), only that middle area (`#page-scroll`) scrolls, and a soft fade at its bottom edge shows there is more. Spacing tightens on shorter windows, so most pages fit without scrolling on a typical laptop. The full footer follows every page. On short pages it sits at the bottom of the window; on longer pages it is at the end of the scroll.
+## Look and feel
 
-Each page has its own URL (`/#skills`, `/#contact`, …), so browser back/forward, bookmarks and shared links work. The logic is `setupPages()` in `js/app.js`; the styles are under "Pages" in `css/styles.css`. Page order follows the order of the sections in `index.html`, and page names come from `nav` in `data.js`. Without JavaScript, and when printing, all sections show stacked as before.
+The brand gradient (blue → violet → teal) and the ambient background glow are CSS variables at the top of `css/styles.css` (`--grad`, `--grad-text`, `--glow`, `--ambient-*`), defined separately for the dark and light themes. Change them there to re-colour the whole site. Animations (the drifting hero glows, section reveals, card hover lift) are switched off for visitors who prefer reduced motion.
 
 ## Opening CV popup
 
@@ -67,7 +64,6 @@ Headings use **Manrope** and text uses **Inter**. Both are bundled with the site
 
 Everything is in **`js/data.js`**. Search it for `TODO` to find the placeholders still to fill in:
 
-- `social.linkedin` — LinkedIn URL (the LinkedIn buttons appear once it is set)
 - `projects[].github` / `projects[].live` — real repository / demo URLs only (the GitHub / Live demo buttons appear once set)
 - `projects[].tech` — add the actual languages/frameworks each project used
 - `projects[].image` — path to a real screenshot, e.g. `images/projects/supportdesk.png` (an illustrated preview is shown until then)
@@ -90,4 +86,4 @@ Messages are sent through [FormSubmit](https://formsubmit.co) to `gidamasaudatho
 
 ## Deployment
 
-Works on any static host (GitHub Pages, Netlify, Vercel). The canonical / social-sharing URLs in `index.html` and `cv/index.html` assume `https://gidahthomas.github.io/portfolio/` — update them if you deploy elsewhere.
+Hosted on **Vercel** at https://gidah-thomas.vercel.app (project `gidah-thomas`). It is a static site with no build step. To publish changes, run `npx vercel deploy --prod` from this folder (`.vercelignore` keeps the README, font sources and `.env*` files out of the upload). The canonical / social-sharing URLs in `index.html`, `cv/index.html` and `social.portfolio` in `js/data.js` use that address — update them if the domain changes.

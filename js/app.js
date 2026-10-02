@@ -16,6 +16,8 @@
   function get(path) {
     return path.split('.').reduce(function (o, k) { return o == null ? o : o[k]; }, D);
   }
+  // Email for display: a long address wraps before the "@" instead of mid-word on narrow screens
+  function emailHtml(s) { return esc(s).replace('@', '<wbr>@'); }
   function mount(id, html) { var el = document.getElementById(id); if (el) el.innerHTML = html; }
   function chips(items, cls) {
     return items.map(function (t) { return '<li class="' + (cls || 'chip') + '">' + esc(t) + '</li>'; }).join('');
@@ -94,7 +96,7 @@
     }
     mount('hero-meta',
       '<li>' + icon('pin') + esc(p.location) + '</li>' +
-      '<li><a href="' + esc(D.social.email) + '">' + icon('mail') + esc(p.email) + '</a></li>' +
+      '<li><a href="' + esc(D.social.email) + '">' + icon('mail') + '<span>' + emailHtml(p.email) + '</span></a></li>' +
       (p.phone ? '<li><a href="tel:' + esc(p.phone.replace(/\s+/g, '')) + '">' + icon('phone') + esc(p.phone) + '</a></li>' : ''));
   }
 
@@ -292,7 +294,7 @@
       ? '<a class="info-card" href="tel:' + esc(p.phone.replace(/\s+/g, '')) + '"><span class="card-icon">' + icon('phone') + '</span><div><small>Phone</small><strong>' + esc(p.phone) + '</strong></div></a>'
       : '<div class="info-card is-pending"><span class="card-icon">' + icon('phone') + '</span><div><small>Phone</small><strong>Available on request</strong></div></div>';
     mount('contact-info',
-      '<a class="info-card" href="' + esc(D.social.email) + '"><span class="card-icon">' + icon('mail') + '</span><div><small>Email</small><strong>' + esc(p.email) + '</strong></div></a>' +
+      '<a class="info-card" href="' + esc(D.social.email) + '"><span class="card-icon">' + icon('mail') + '</span><div><small>Email</small><strong>' + emailHtml(p.email) + '</strong></div></a>' +
       phone +
       '<div class="info-card"><span class="card-icon">' + icon('pin') + '</span><div><small>Location</small><strong>' + esc(p.location) + '</strong></div></div>' +
       '<div class="info-links"><p>Find me online</p>' +
@@ -344,195 +346,110 @@
     set(false);
   }
 
-  // With pages that fit the window, the page area scrolls instead of the window
-  var scroller = document.getElementById('page-scroll');
-
   function setupHeaderShadow() {
     var header = document.getElementById('site-header');
-    var root = document.documentElement;
-    function onScroll() {
-      header.classList.toggle('scrolled', Math.max(window.scrollY, scroller.scrollTop) > 8);
-      // Fade the bottom edge of the page area while there is more to scroll to
-      scroller.classList.toggle('has-more', scroller.scrollTop + scroller.clientHeight < scroller.scrollHeight - 4);
-      // Header and pager leave the same room as the page area's scrollbar, so everything lines up
-      root.style.setProperty('--sbw', (scroller.offsetWidth - scroller.clientWidth) + 'px');
+    var bar = document.getElementById('scroll-progress');
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var y = window.scrollY;
+      header.classList.toggle('scrolled', y > 8);
+      // Reading progress along the top edge of the header
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      if (bar) bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, y / max) : 0) + ')';
     }
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
     window.addEventListener('scroll', onScroll, { passive: true });
-    scroller.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
-    if ('ResizeObserver' in window) new ResizeObserver(onScroll).observe(document.getElementById('main'));
-    onScroll();
+    update();
   }
 
-  // ---------- Pages: one section at a time, sliding in from the side ----------
-  // Every <section> in <main> is a page. Links to "#<section id>" switch pages (with history),
-  // as do the pager, the ←/→ keys and a horizontal swipe. Without JS all sections show stacked.
+  // ---------- Single scrolling page: smooth anchor links and active-section highlighting ----------
+  // Links to "#<section id>" scroll natively (smooth, offset by the sticky header via scroll-padding-top).
+  // The menu item for the section in view is highlighted as the page scrolls.
   var pages = { go: function () {} };
-  function setupPages() {
-    var root = document.documentElement;
-    var main = document.getElementById('main');
-    var pager = document.getElementById('pager');
+  function setupScrollNav() {
     var sections = $all('main > section[id]');
-    var ids = sections.map(function (s) { return s.id; });
-    var labels = {};
-    D.nav.forEach(function (n) { labels[n.id] = n.label; });
-    // A section without a link in a given menu highlights its nearest preceding item instead
-    var fallback = { interests: 'leadership', cv: 'services' };
+    // A section without a link in a given menu (e.g. CV and Interests on the desktop bar) highlights nothing there
     var lists = $all('#nav-links, #mobile-links, #footer-links');
-    var baseTitle = document.title;
     var current = null;
-    var animTimer = null;
 
     function activate(id) {
+      if (id === current) return;
+      current = id;
       lists.forEach(function (list) {
-        var target = list.querySelector('[data-nav="' + id + '"]') ? id : fallback[id];
         $all('[data-nav]', list).forEach(function (a) {
-          var on = a.getAttribute('data-nav') === target;
+          var on = a.getAttribute('data-nav') === id;
           a.classList.toggle('active', on);
-          if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+          if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
         });
       });
     }
 
-    function renderPager(i) {
-      function side(j, dir) {
-        var id = ids[j];
-        if (!id) return '<span class="pager-link pager-' + dir + '" aria-hidden="true"></span>';
-        return '<a class="pager-link pager-' + dir + '" href="#' + id + '">' +
-          (dir === 'prev' ? icon('arrowLeft') : '') +
-          '<span class="pager-text"><small>' + (dir === 'prev' ? 'Previous' : 'Next') + '</small>' +
-          '<strong>' + esc(labels[id] || id) + '</strong></span>' +
-          (dir === 'next' ? icon('arrowRight') : '') + '</a>';
-      }
-      pager.innerHTML = '<div class="container pager-inner">' + side(i - 1, 'prev') +
-        '<div class="pager-mid"><ol class="pager-dots">' + ids.map(function (id, j) {
-          return '<li><a href="#' + id + '" aria-label="' + esc(labels[id] || id) + '"' +
-            (j === i ? ' aria-current="page"' : '') + '></a></li>';
-        }).join('') + '</ol><span class="pager-count">' + (i + 1) + ' / ' + ids.length + '</span></div>' +
-        side(i + 1, 'next') + '</div>';
+    // The current section is the last one whose top has passed a line a third of the way down the window
+    var ticking = false;
+    function spy() {
+      ticking = false;
+      var line = window.innerHeight * 0.33;
+      var id = sections[0].id;
+      var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      if (atBottom) id = sections[sections.length - 1].id;
+      else sections.forEach(function (s) { if (s.getBoundingClientRect().top <= line) id = s.id; });
+      activate(id);
     }
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
+    window.addEventListener('resize', spy);
 
-    // The page a hash belongs to: a section id, or the section containing that element
-    function pageFor(hash) {
-      if (!hash) return null;
-      if (ids.indexOf(hash) !== -1) return hash;
-      var el = document.getElementById(hash);
-      var sec = el && el.closest('main > section[id]');
-      return sec ? sec.id : null;
+    // Move keyboard focus to the section heading after following an in-page link
+    function focusHeading(sec) {
+      var h = sec && sec.querySelector('h1, h2');
+      if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
     }
-
-    function show(id, focus) {
-      var i = ids.indexOf(id);
-      if (i === -1) return;
-      if (id !== current) {
-        var from = ids.indexOf(current);
-        sections.forEach(function (s) { s.classList.remove('is-current', 'enter-next', 'enter-prev'); });
-        var sec = sections[i];
-        sec.classList.add('is-current');
-        if (current !== null && !reduceMotion) {
-          sec.classList.add(i > from ? 'enter-next' : 'enter-prev');
-          clearTimeout(animTimer);
-          animTimer = setTimeout(function () { sec.classList.remove('enter-next', 'enter-prev'); }, 600);
-        }
-        current = id;
-        activate(id);
-        renderPager(i);
-        document.title = i === 0 ? baseTitle : (labels[id] || id) + ' | Gidah Thomas';
-        root.setAttribute('data-page', id); // the current page, for page-specific styling
-      }
-      scroller.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      if (focus) {
-        var h = sections[i].querySelector('h1, h2');
-        if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
-      }
-    }
-
-    function go(id) {
-      if (ids.indexOf(id) === -1) return;
-      if (id !== current) history.pushState(null, '', '#' + id);
-      show(id, true);
-    }
-    pages.go = go;
-
-    function step(delta) {
-      var j = ids.indexOf(current) + delta;
-      if (j >= 0 && j < ids.length) go(ids[j]);
-    }
-
-    function dialogOpen() {
-      return root.classList.contains('cv-open') || document.body.classList.contains('modal-open') ||
-        document.body.classList.contains('menu-open');
-    }
-
     document.addEventListener('click', function (e) {
-      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (e.defaultPrevented || e.button !== 0) return;
       var a = e.target.closest('a[href^="#"]');
-      if (!a) return;
-      if (a.classList.contains('to-top')) {
-        e.preventDefault();
-        scroller.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-        window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-        return;
-      }
-      var id = pageFor(a.getAttribute('href').slice(1));
-      if (!id) return;
-      e.preventDefault();
-      go(id);
+      var sec = a && document.getElementById(a.getAttribute('href').slice(1));
+      // Deferred: following the link resets focus, so move it once the browser has done that
+      if (sec && sec.matches('main > section')) setTimeout(function () { focusHeading(sec); }, 0);
     });
 
-    // Back / forward and hand-edited URLs
-    window.addEventListener('hashchange', function () {
-      show(pageFor(location.hash.slice(1)) || ids[0], true);
-    });
+    pages.go = function (id) {
+      var sec = document.getElementById(id);
+      if (!sec) return;
+      history.pushState(null, '', '#' + id);
+      sec.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      focusHeading(sec);
+    };
 
-    document.addEventListener('keydown', function (e) {
-      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || dialogOpen()) return;
-      if (e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) return;
-      e.preventDefault();
-      step(e.key === 'ArrowRight' ? 1 : -1);
-    });
-
-    // Horizontal swipe on touch screens (ignored inside form fields and sideways-scrolling areas)
-    var sx = 0, sy = 0, st = 0, tracking = false;
-    main.addEventListener('touchstart', function (e) {
-      tracking = e.touches.length === 1 && !(e.target.closest && e.target.closest('input, textarea, select'));
-      for (var el = e.target; tracking && el && el !== main; el = el.parentElement) {
-        if (el.scrollWidth > el.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(el).overflowX)) tracking = false;
-      }
-      if (!tracking) return;
-      sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
-    }, { passive: true });
-    main.addEventListener('touchend', function (e) {
-      if (!tracking) return;
-      tracking = false;
-      var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
-      if (Date.now() - st < 700 && Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.8 && !dialogOpen()) step(dx < 0 ? 1 : -1);
-    }, { passive: true });
-
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-    root.classList.add('paged');
-    var start = location.hash.slice(1);
-    show(pageFor(start) || ids[0], false);
-    // A deep link to something inside a page (e.g. #cf-name) still lands on that element
-    if (start && ids.indexOf(start) === -1 && document.getElementById(start)) {
-      document.getElementById(start).scrollIntoView({ block: 'start' });
-    }
+    spy();
   }
 
   function setupReveal() {
     var els = $all('.reveal');
-    if (reduceMotion || !('IntersectionObserver' in window)) {
+    if (reduceMotion) {
       els.forEach(function (el) { el.classList.add('in'); });
       return;
     }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    // Reveal everything whose top has reached the lower part of the window, including anything
+    // already scrolled past. Checked on every scroll (not IntersectionObserver), so a fast fling or
+    // an in-page jump can never leave content invisible.
+    var ticking = false;
+    function check() {
+      ticking = false;
+      var line = window.innerHeight * 0.94;
+      els = els.filter(function (el) {
+        if (el.getBoundingClientRect().top < line) { el.classList.add('in'); return false; }
+        return true;
       });
-    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
-    els.forEach(function (el) { io.observe(el); });
+      if (!els.length) {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      }
+    }
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(check); } }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    check();
   }
 
   function setupSkillFilter() {
@@ -790,7 +707,7 @@
   setupTheme();
   setupMenu();
   setupHeaderShadow();
-  setupPages();
+  setupScrollNav();
   setupReveal();
   setupSkillFilter();
   setupCvViewer();

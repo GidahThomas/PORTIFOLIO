@@ -36,7 +36,8 @@
   display: grid; grid-template-columns: auto 1fr; gap: .9em 1.1em; align-items: center;
   padding-bottom: 1.1em; border-bottom: 2px solid var(--cvd-ink);
 }
-.cvd-photo { width: 4.6em; height: 4.6em; border-radius: .8em; object-fit: cover; background: var(--cvd-tint); display: block; }
+/* max-width: none — the site-wide img { max-width: 100% } would let the auto grid column collapse on narrow screens */
+.cvd-photo { width: 4.6em; height: 4.6em; max-width: none; border-radius: .8em; object-fit: cover; background: var(--cvd-tint); display: block; }
 .cvd-name {
   font-family: 'Manrope', 'Inter', 'Inter Fallback', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-weight: 800;
   font-size: 1.55em; line-height: 1.15; letter-spacing: .01em; text-transform: uppercase; color: var(--cvd-ink);

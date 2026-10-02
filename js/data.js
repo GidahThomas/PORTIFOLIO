@@ -41,9 +41,9 @@ window.PORTFOLIO = {
 
   social: {
     github: 'https://github.com/GidahThomas',
-    linkedin: null, // TODO: add LinkedIn profile URL, e.g. 'https://www.linkedin.com/in/your-handle/'
+    linkedin: 'https://www.linkedin.com/in/gidamasauda-thomas-8362b7324/',
     email: 'mailto:gidamasaudathomas@gmail.com',
-    portfolio: 'https://gidahthomas.github.io/portfolio/'
+    portfolio: 'https://gidah-thomas.vercel.app/'
   },
 
   about: {

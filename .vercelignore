@@ -1,0 +1,5 @@
+# Not part of the website
+.env*
+.playwright-mcp
+README.md
+assets/fonts/*.woff2
